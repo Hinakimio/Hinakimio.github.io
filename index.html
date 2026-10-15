@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>雛希みおの喫茶店</title>
+<style>
+:root{
+  color-scheme:light;
+  --paper:#faf9f6; --ink:#262324; --muted:#77716f;
+  --line:rgba(38,35,36,.13); --accent:#b77465;
+  --serif:"Bodoni MT","Times New Roman","Noto Serif SC","Songti SC",SimSun,serif;
+  --sans:"Segoe UI","Microsoft YaHei UI","Microsoft YaHei",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+     -webkit-font-smoothing:antialiased;line-height:1.75}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+
+/* ---------- 顶栏 ---------- */
+.site-header{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;
+  justify-content:space-between;padding:20px clamp(18px,4vw,52px);
+  background:rgba(250,249,246,.86);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line)}
+.wordmark strong{font-family:var(--serif);font-size:17px;letter-spacing:.16em;font-weight:600}
+.wordmark small{display:block;font-size:9.5px;letter-spacing:.28em;color:var(--muted);margin-top:2px}
+.site-nav{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.site-nav button{border:1px solid transparent;background:none;color:var(--muted);
+  padding:6px 13px;border-radius:999px;font-size:13px;letter-spacing:.04em;transition:.18s}
+.site-nav button:hover{color:var(--ink)}
+.site-nav button.on{color:var(--ink);border-color:var(--line);background:#fff}
+
+/* ---------- 门 ---------- */
+.access-gate{min-height:100vh;display:grid;place-items:center;text-align:center;padding:0 24px}
+.eyebrow{font-size:10.5px;letter-spacing:.34em;color:var(--muted);margin:0 0 22px;text-transform:uppercase}
+.access-form h1{font-family:var(--serif);font-size:clamp(38px,8.5vw,76px);
+  margin:0 0 20px;font-weight:400;letter-spacing:.02em;line-height:1.16}
+.accent-dot{color:var(--accent)}
+.gate-note{color:var(--muted);font-size:14.5px;margin:0 0 38px;letter-spacing:.03em}
+.enter-button{display:inline-flex;align-items:center;gap:9px;background:none;
+  border:1px solid var(--line);border-radius:999px;padding:12px 26px;font-size:13.5px;
+  letter-spacing:.08em;color:var(--ink);transition:.22s}
+.enter-button:hover{border-color:var(--accent);color:var(--accent)}
+.enter-button:hover svg{transform:translateX(4px)}
+.enter-button svg{transition:transform .22s}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:120px 24px 80px;text-align:center}
+.hero-art{border:0;background:none;padding:0;max-width:min(560px,74vw);cursor:zoom-in}
+.hero-art img{width:100%;display:block;border-radius:3px;
+  box-shadow:0 22px 60px -22px rgba(38,35,36,.34)}
+.hero-caption{margin-top:34px}
+.hero-caption h1{font-family:var(--serif);font-size:clamp(30px,5.4vw,48px);
+  margin:0 0 10px;font-weight:400}
+.hero-caption p:not(.eyebrow){color:var(--muted);margin:0;font-size:13.5px;letter-spacing:.06em}
+.hero-scroll{position:absolute;bottom:34px;font-size:19px;color:var(--muted);
+  animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(7px);opacity:1}}
+
+/* ---------- 作品区 ---------- */
+.gallery-section{padding:26px clamp(18px,4vw,52px) 110px;max-width:1560px;margin:0 auto}
+.gallery-heading{display:flex;align-items:baseline;justify-content:space-between;
+  border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:24px;flex-wrap:wrap;gap:10px}
+.gallery-heading h2{font-family:var(--serif);font-size:clamp(24px,3.6vw,34px);
+  margin:0;font-weight:400;letter-spacing:.01em}
+.gallery-heading p{margin:0;color:var(--muted);font-size:12.5px;letter-spacing:.06em}
+.gallery-toolbar{display:flex;justify-content:space-between;gap:14px;margin-bottom:26px;flex-wrap:wrap}
+.categories{display:flex;gap:6px;flex-wrap:wrap}
+.categories button{border:1px solid transparent;background:none;color:var(--muted);
+  padding:6px 15px;border-radius:999px;font-size:12.5px;letter-spacing:.05em;transition:.18s}
+.categories button:hover{color:var(--ink)}
+.categories button.on{color:var(--ink);border-color:var(--line);background:#fff}
+.gallery-search{border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);
+  padding:7px 2px;font-size:13px;font-family:inherit;width:180px;transition:.2s}
+.gallery-search:focus{outline:none;border-bottom-color:var(--accent);width:230px}
+
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:clamp(10px,1.6vw,20px)}
+.card{border:0;background:none;padding:0;text-align:left;position:relative;
+  border-radius:3px;overflow:hidden;transition:transform .3s cubic-bezier(.2,.7,.3,1)}
+.card:hover{transform:translateY(-5px)}
+.card-img{aspect-ratio:4/5;overflow:hidden;background:#efece6;border-radius:3px}
+.card-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+.card:hover .card-img img{transform:scale(1.045)}
+.card-meta{padding:12px 2px 4px}
+.card-meta h3{margin:0;font-size:13.5px;font-weight:500;letter-spacing:.02em}
+.card-meta span{display:block;font-size:10.5px;color:var(--muted);
+  letter-spacing:.16em;margin-top:3px;text-transform:uppercase}
+.gallery-empty{text-align:center;color:var(--muted);padding:70px 0;font-size:13.5px}
+
+/* ---------- 灯箱 ---------- */
+.viewer{position:fixed;inset:0;z-index:80;background:rgba(250,249,246,.97);
+  backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;flex-direction:column;padding:64px 70px}
+.viewer.on{display:flex}
+.viewer-stage{max-width:100%;max-height:78vh;display:flex;align-items:center;justify-content:center}
+.viewer-stage img{max-width:100%;max-height:78vh;object-fit:contain;
+  box-shadow:0 26px 70px -26px rgba(38,35,36,.4);border-radius:3px}
+.viewer-info{margin-top:20px;text-align:center}
+.viewer-info h3{margin:0 0 5px;font-family:var(--serif);font-size:19px;font-weight:400}
+.viewer-info p{margin:0;color:var(--muted);font-size:11.5px;letter-spacing:.1em}
+.viewer-close{position:absolute;top:18px;right:24px;font-size:30px;line-height:1;
+  background:none;border:0;color:var(--muted);transition:.2s}
+.viewer-close:hover{color:var(--ink)}
+.viewer-nav{position:absolute;top:50%;transform:translateY(-50%);background:none;border:0;
+  font-size:38px;color:var(--muted);padding:0 22px;line-height:1;transition:.2s}
+.viewer-nav:hover{color:var(--accent)}
+#v-prev{left:6px}#v-next{right:6px}
+.viewer-dl{display:inline-block;margin-top:14px;font-size:11.5px;letter-spacing:.12em;
+  color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:2px;transition:.2s}
+.viewer-dl:hover{color:var(--accent);border-color:var(--accent)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="wordmark" href="#top"><strong>HINAKI MIO</strong><small>COFFEE HOUSE</small></a>
+  <nav class="site-nav" id="nav">
+    <button data-cat="all" class="on">全部</button>
+  </nav>
+</header>
+
+<main>
+  <section class="access-gate" id="gate">
+    <div class="access-form">
+      <p class="eyebrow">HINAKI MIO COLLECTION</p>
+      <h1>雛希みおの<span class="accent-dot">喫茶店</span></h1>
+      <p class="gate-note">插画、角色设定，以及一些想留下来的瞬间。</p>
+      <button class="enter-button" id="enter">进入画廊
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <div id="stage" hidden>
+    <section class="hero" id="top">
+      <button class="hero-art" id="hero-art"><img id="hero-img" alt=""></button>
+      <div class="hero-caption">
+        <p class="eyebrow">THE HINAKI MIO COLLECTION</p>
+        <h1>Hinaki Mio.</h1>
+        <p>雛希みお ／ 插画 · 角色设定</p>
+      </div>
+      <a class="hero-scroll" href="#collection">↓</a>
+    </section>
+
+    <section class="gallery-section" id="collection">
+      <div class="gallery-heading">
+        <h2>Works.</h2>
+        <p><span id="count">0</span> 张作品</p>
+      </div>
+      <div class="gallery-toolbar">
+        <div class="categories" id="filters"></div>
+        <label><input class="gallery-search" id="search" type="search" placeholder="搜索作品…" autocomplete="off"></label>
+      </div>
+      <div class="gallery-grid" id="grid"></div>
+      <p class="gallery-empty" id="empty" hidden>没有找到作品。</p>
+    </section>
+  </div>
+</main>
+
+<div class="viewer" id="viewer">
+  <button class="viewer-close" id="v-close">&times;</button>
+  <button class="viewer-nav" id="v-prev">&#8249;</button>
+  <button class="viewer-nav" id="v-next">&#8250;</button>
+  <div class="viewer-stage"><img id="v-img" alt=""></div>
+  <div class="viewer-info">
+    <h3 id="v-title"></h3>
+    <p id="v-sub"></p>
+    <a class="viewer-dl" id="v-dl" download>下载原图 ↓</a>
+  </div>
+</div>
+
+<script>
+const DATA = [{"id": "其他_日式庭院首测", "cat": "其他", "title": "日式庭院首测", "sub": "", "file": "works/其他_日式庭院首测.png", "thumb": "thumbs/其他_日式庭院首测.jpg", "w": 1024, "h": 1024, "date": "2026-10-15"}, {"id": "其他_服装风格对照", "cat": "其他", "title": "服装风格对照", "sub": "", "file": "works/其他_服装风格对照.png", "thumb": "thumbs/其他_服装风格对照.jpg", "w": 940, "h": 835, "date": "2026-10-15"}, {"id": "插画_哥特洛丽塔回眸", "cat": "插画", "title": "哥特洛丽塔回眸", "sub": "", "file": "works/插画_哥特洛丽塔回眸.png", "thumb": "thumbs/插画_哥特洛丽塔回眸.jpg", "w": 1152, "h": 2048, "date": "2026-10-15"}, {"id": "插画_哥特洛丽塔提裙", "cat": "插画", "title": "哥特洛丽塔提裙", "sub": "", "file": "works/插画_哥特洛丽塔提裙.png", "thumb": "thumbs/插画_哥特洛丽塔提裙.jpg", "w": 1152, "h": 2048, "date": "2026-10-15"}, {"id": "角色设定图_设定表初版", "cat": "角色设定图", "title": "设定表初版", "sub": "", "file": "works/角色设定图_设定表初版.png", "thumb": "thumbs/角色设定图_设定表初版.jpg", "w": 1152, "h": 2048, "date": "2026-10-15"}, {"id": "角色设定图_雛希雫完整设定表", "cat": "角色设定图", "title": "雛希雫完整设定表", "sub": "", "file": "works/角色设定图_雛希雫完整设定表.png", "thumb": "thumbs/角色设定图_雛希雫完整设定表.jpg", "w": 1888, "h": 1248, "date": "2026-10-15"}];
+let view = [], cur = 0, cat = 'all', q = '';
+
+const $ = id => document.getElementById(id);
+const grid = $('grid'), filters = $('filters'), nav = $('nav');
+
+/* 分类按钮：顶栏 + 工具条各一份 */
+const cats = ['all', ...new Set(DATA.map(d => d.cat))];
+const catName = c => c === 'all' ? '全部' : c;
+cats.forEach(c => {
+  const b1 = document.createElement('button');
+  b1.textContent = catName(c); b1.dataset.cat = c;
+  if (c === 'all') b1.classList.add('on');
+  b1.onclick = () => setCat(c);
+  nav.appendChild(b1);
+
+  const b2 = document.createElement('button');
+  b2.textContent = catName(c); b2.dataset.cat = c;
+  if (c === 'all') b2.classList.add('on');
+  b2.onclick = () => setCat(c);
+  filters.appendChild(b2);
+});
+function setCat(c) {
+  cat = c;
+  document.querySelectorAll('[data-cat]').forEach(b => b.classList.toggle('on', b.dataset.cat === c));
+  render();
+}
+
+function render() {
+  view = DATA.filter(d =>
+    (cat === 'all' || d.cat === cat) &&
+    (!q || d.title.toLowerCase().includes(q) || (d.sub || '').toLowerCase().includes(q))
+  );
+  $('count').textContent = view.length;
+  $('empty').hidden = view.length > 0;
+  const frag = document.createDocumentFragment();
+  view.forEach((d, i) => {
+    const c = document.createElement('button');
+    c.className = 'card';
+    c.innerHTML = '<div class="card-img"><img loading="lazy" src="' + d.thumb + '" alt=""></div>' +
+                  '<div class="card-meta"><h3>' + d.title + '</h3><span>' + (d.sub || d.cat) + '</span></div>';
+    c.onclick = () => open(i);
+    frag.appendChild(c);
+  });
+  grid.replaceChildren(frag);
+}
+
+function open(i) { cur = i; paint(); $('viewer').classList.add('on'); document.body.style.overflow = 'hidden'; }
+function close() { $('viewer').classList.remove('on'); document.body.style.overflow = ''; }
+function step(n) { if (!view.length) return; cur = (cur + n + view.length) % view.length; paint(); }
+function paint() {
+  const d = view[cur]; if (!d) return;
+  $('v-img').src = d.file;
+  $('v-img').alt = d.title;
+  $('v-title').textContent = d.title;
+  $('v-sub').textContent = (d.sub ? d.sub + ' · ' : '') + d.cat + ' · ' + (d.date || '') + '　' + (cur + 1) + '/' + view.length;
+  $('v-dl').href = d.file;
+  $('v-dl').setAttribute('download', d.title + (d.file.match(/\.[a-z]+$/i) || [''])[0]);
+}
+
+$('enter').onclick = () => { $('gate').hidden = true; $('stage').hidden = false; window.scrollTo(0, 0); };
+$('v-close').onclick = close;
+$('v-prev').onclick = () => step(-1);
+$('v-next').onclick = () => step(1);
+$('viewer').onclick = e => { if (e.target.id === 'viewer' || e.target.classList.contains('viewer-stage')) close(); };
+$('search').oninput = e => { q = e.target.value.trim().toLowerCase(); render(); };
+$('hero-art').onclick = () => { if (view.length) open(0); };
+document.addEventListener('keydown', e => {
+  if (!$('viewer').classList.contains('on')) return;
+  if (e.key === 'Escape') close();
+  if (e.key === 'ArrowLeft') step(-1);
+  if (e.key === 'ArrowRight') step(1);
+});
+
+/* Hero 用第一张作品 */
+if (DATA.length) $('hero-img').src = DATA[0].file;
+render();
+</script>
+</body>
+</html>
