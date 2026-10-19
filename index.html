@@ -82,8 +82,8 @@ button{font-family:inherit;cursor:pointer}
 .card{border:0;background:none;padding:0;text-align:left;position:relative;
   border-radius:3px;overflow:hidden;transition:transform .3s cubic-bezier(.2,.7,.3,1)}
 .card:hover{transform:translateY(-5px)}
-.card-img{aspect-ratio:4/5;overflow:hidden;background:#efece6;border-radius:3px}
-.card-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+.card-img{aspect-ratio:9/16;overflow:hidden;background:#efece6;border-radius:3px}
+.card-img img{width:100%;height:100%;object-fit:contain;display:block;transition:transform .5s}
 .card:hover .card-img img{transform:scale(1.045)}
 .card-meta{padding:12px 2px 4px}
 .card-meta h3{margin:0;font-size:13.5px;font-weight:500;letter-spacing:.02em}
@@ -118,9 +118,7 @@ button{font-family:inherit;cursor:pointer}
 
 <header class="site-header">
   <a class="wordmark" href="#top"><strong>HINAKI MIO</strong><small>COFFEE HOUSE</small></a>
-  <nav class="site-nav" id="nav">
-    <button data-cat="all" class="on">全部</button>
-  </nav>
+  <nav class="site-nav" id="nav"></nav>
 </header>
 
 <main>
@@ -174,14 +172,14 @@ button{font-family:inherit;cursor:pointer}
 </div>
 
 <script>
-const DATA = [{"id": "其他_日式庭院首测", "cat": "其他", "title": "日式庭院首测", "sub": "", "file": "works/其他_日式庭院首测.png", "thumb": "thumbs/其他_日式庭院首测.jpg", "w": 1024, "h": 1024, "date": "2026-10-15"}, {"id": "其他_服装风格对照", "cat": "其他", "title": "服装风格对照", "sub": "", "file": "works/其他_服装风格对照.png", "thumb": "thumbs/其他_服装风格对照.jpg", "w": 940, "h": 835, "date": "2026-10-15"}, {"id": "插画_哥特洛丽塔回眸", "cat": "插画", "title": "哥特洛丽塔回眸", "sub": "", "file": "works/插画_哥特洛丽塔回眸.png", "thumb": "thumbs/插画_哥特洛丽塔回眸.jpg", "w": 1152, "h": 2048, "date": "2026-10-15"}, {"id": "插画_哥特洛丽塔提裙", "cat": "插画", "title": "哥特洛丽塔提裙", "sub": "", "file": "works/插画_哥特洛丽塔提裙.png", "thumb": "thumbs/插画_哥特洛丽塔提裙.jpg", "w": 1152, "h": 2048, "date": "2026-10-15"}, {"id": "角色设定图_设定表初版", "cat": "角色设定图", "title": "设定表初版", "sub": "", "file": "works/角色设定图_设定表初版.png", "thumb": "thumbs/角色设定图_设定表初版.jpg", "w": 1152, "h": 2048, "date": "2026-10-15"}, {"id": "角色设定图_雛希雫完整设定表", "cat": "角色设定图", "title": "雛希雫完整设定表", "sub": "", "file": "works/角色设定图_雛希雫完整设定表.png", "thumb": "thumbs/角色设定图_雛希雫完整设定表.jpg", "w": 1888, "h": 1248, "date": "2026-10-15"}];
+const DATA = [{"id": "其他_日式庭院首测", "cat": "其他", "title": "其他_日式庭院首测", "sub": "", "file": "works/其他_日式庭院首测.png", "thumb": "thumbs/其他_日式庭院首测.jpg", "w": 1024, "h": 1024, "date": "2026-10-15"}, {"id": "其他_服装风格对照", "cat": "其他", "title": "其他_服装风格对照", "sub": "", "file": "works/其他_服装风格对照.png", "thumb": "thumbs/其他_服装风格对照.jpg", "w": 940, "h": 835, "date": "2026-10-15"}, {"id": "插画_哥特洛丽塔回眸", "cat": "其他", "title": "插画_哥特洛丽塔回眸", "sub": "", "file": "works/插画_哥特洛丽塔回眸.png", "thumb": "thumbs/插画_哥特洛丽塔回眸.jpg", "w": 1152, "h": 2048, "date": "2026-10-15"}, {"id": "插画_哥特洛丽塔提裙", "cat": "其他", "title": "插画_哥特洛丽塔提裙", "sub": "", "file": "works/插画_哥特洛丽塔提裙.png", "thumb": "thumbs/插画_哥特洛丽塔提裙.jpg", "w": 1152, "h": 2048, "date": "2026-10-15"}, {"id": "衣柜_JK针织_格纹蝴蝶结", "cat": "衣柜", "title": "JK针织_格纹蝴蝶结", "sub": "", "file": "works/衣柜_JK针织_格纹蝴蝶结.png", "thumb": "thumbs/衣柜_JK针织_格纹蝴蝶结.jpg", "w": 1152, "h": 2048, "date": "2026-10-19"}, {"id": "衣柜_冬季针织_酒红围巾", "cat": "衣柜", "title": "冬季针织_酒红围巾", "sub": "", "file": "works/衣柜_冬季针织_酒红围巾.png", "thumb": "thumbs/衣柜_冬季针织_酒红围巾.jpg", "w": 1152, "h": 2048, "date": "2026-10-17"}, {"id": "衣柜_古典女仆装_华丽版", "cat": "衣柜", "title": "古典女仆装_华丽版", "sub": "", "file": "works/衣柜_古典女仆装_华丽版.png", "thumb": "thumbs/衣柜_古典女仆装_华丽版.jpg", "w": 1152, "h": 2048, "date": "2026-10-19"}, {"id": "衣柜_古典女仆装_素版", "cat": "衣柜", "title": "古典女仆装_素版", "sub": "", "file": "works/衣柜_古典女仆装_素版.png", "thumb": "thumbs/衣柜_古典女仆装_素版.jpg", "w": 1152, "h": 2048, "date": "2026-10-19"}, {"id": "衣柜_哥特洛丽塔_黑紫", "cat": "衣柜", "title": "哥特洛丽塔_黑紫", "sub": "", "file": "works/衣柜_哥特洛丽塔_黑紫.png", "thumb": "thumbs/衣柜_哥特洛丽塔_黑紫.jpg", "w": 1152, "h": 2048, "date": "2026-10-19"}, {"id": "衣柜_浴衣_淡紫樱花", "cat": "衣柜", "title": "浴衣_淡紫樱花", "sub": "", "file": "works/衣柜_浴衣_淡紫樱花.png", "thumb": "thumbs/衣柜_浴衣_淡紫樱花.jpg", "w": 1152, "h": 2048, "date": "2026-10-17"}, {"id": "衣柜_白紫洛丽塔_吊带袜", "cat": "衣柜", "title": "白紫洛丽塔_吊带袜", "sub": "", "file": "works/衣柜_白紫洛丽塔_吊带袜.png", "thumb": "thumbs/衣柜_白紫洛丽塔_吊带袜.jpg", "w": 1152, "h": 2048, "date": "2026-10-19"}, {"id": "衣柜_维多利亚礼服_翡翠绿", "cat": "衣柜", "title": "维多利亚礼服_翡翠绿", "sub": "", "file": "works/衣柜_维多利亚礼服_翡翠绿.png", "thumb": "thumbs/衣柜_维多利亚礼服_翡翠绿.jpg", "w": 1152, "h": 2048, "date": "2026-10-19"}, {"id": "衣柜_维多利亚礼服_酒红", "cat": "衣柜", "title": "维多利亚礼服_酒红", "sub": "", "file": "works/衣柜_维多利亚礼服_酒红.png", "thumb": "thumbs/衣柜_维多利亚礼服_酒红.jpg", "w": 1152, "h": 2048, "date": "2026-10-19"}, {"id": "衣柜_黑金旗袍_开衩丝袜", "cat": "衣柜", "title": "黑金旗袍_开衩丝袜", "sub": "", "file": "works/衣柜_黑金旗袍_开衩丝袜.png", "thumb": "thumbs/衣柜_黑金旗袍_开衩丝袜.jpg", "w": 1728, "h": 3072, "date": "2026-10-19"}, {"id": "角色设定图_设定表初版", "cat": "其他", "title": "角色设定图_设定表初版", "sub": "", "file": "works/角色设定图_设定表初版.png", "thumb": "thumbs/角色设定图_设定表初版.jpg", "w": 1152, "h": 2048, "date": "2026-10-15"}, {"id": "角色设定图_雛希雫完整设定表", "cat": "其他", "title": "角色设定图_雛希雫完整设定表", "sub": "", "file": "works/角色设定图_雛希雫完整设定表.png", "thumb": "thumbs/角色设定图_雛希雫完整设定表.jpg", "w": 1888, "h": 1248, "date": "2026-10-15"}];
 let view = [], cur = 0, cat = 'all', q = '';
 
 const $ = id => document.getElementById(id);
 const grid = $('grid'), filters = $('filters'), nav = $('nav');
 
-/* 分类按钮：顶栏 + 工具条各一份 */
-const cats = ['all', ...new Set(DATA.map(d => d.cat))];
+/* 分类按钮：顶栏 + 工具条各一份（固定三项，不随数据变化） */
+const cats = ['all', '壁纸', '衣柜'];
 const catName = c => c === 'all' ? '全部' : c;
 cats.forEach(c => {
   const b1 = document.createElement('button');
