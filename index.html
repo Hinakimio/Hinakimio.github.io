@@ -78,11 +78,12 @@ button{font-family:inherit;cursor:pointer}
   padding:7px 2px;font-size:13px;font-family:inherit;width:180px;transition:.2s}
 .gallery-search:focus{outline:none;border-bottom-color:var(--accent);width:230px}
 
-.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:clamp(10px,1.6vw,20px)}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:clamp(10px,1.6vw,20px);align-items:start}
 .card{border:0;background:none;padding:0;text-align:left;position:relative;
   border-radius:3px;overflow:hidden;transition:transform .3s cubic-bezier(.2,.7,.3,1)}
 .card:hover{transform:translateY(-5px)}
 .card-img{aspect-ratio:9/16;overflow:hidden;background:#efece6;border-radius:3px}
+/* 卡片框跟随图片自身比例（由 JS 写入 aspect-ratio），横图不再上下留白 */
 .card-img img{width:100%;height:100%;object-fit:contain;display:block;transition:transform .5s}
 .card:hover .card-img img{transform:scale(1.045)}
 .card-meta{padding:12px 2px 4px}
@@ -211,7 +212,8 @@ function render() {
   view.forEach((d, i) => {
     const c = document.createElement('button');
     c.className = 'card';
-    c.innerHTML = '<div class="card-img"><img loading="lazy" src="' + d.thumb + '" alt=""></div>' +
+    const ar = (d.w && d.h) ? (d.w + '/' + d.h) : '9/16';
+    c.innerHTML = '<div class="card-img" style="aspect-ratio:' + ar + '"><img loading="lazy" src="' + d.thumb + '" alt=""></div>' +
                   '<div class="card-meta"><h3>' + d.title + '</h3><span>' + (d.sub || d.cat) + '</span></div>';
     c.onclick = () => open(i);
     frag.appendChild(c);
