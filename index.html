@@ -78,7 +78,7 @@ button{font-family:inherit;cursor:pointer}
   padding:7px 2px;font-size:13px;font-family:inherit;width:180px;transition:.2s}
 .gallery-search:focus{outline:none;border-bottom-color:var(--accent);width:230px}
 
-.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:clamp(10px,1.6vw,20px);align-items:start}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:clamp(14px,1.8vw,26px);align-items:start}
 .card{border:0;background:none;padding:0;text-align:left;position:relative;
   border-radius:3px;overflow:hidden;transition:transform .3s cubic-bezier(.2,.7,.3,1)}
 .card:hover{transform:translateY(-5px)}
@@ -86,10 +86,11 @@ button{font-family:inherit;cursor:pointer}
 /* 卡片框跟随图片自身比例（由 JS 写入 aspect-ratio），横图不再上下留白 */
 .card-img img{width:100%;height:100%;object-fit:contain;display:block;transition:transform .5s}
 .card:hover .card-img img{transform:scale(1.045)}
-.card-meta{padding:12px 2px 4px}
-.card-meta h3{margin:0;font-size:13.5px;font-weight:500;letter-spacing:.02em}
-.card-meta span{display:block;font-size:10.5px;color:var(--muted);
-  letter-spacing:.16em;margin-top:3px;text-transform:uppercase}
+.card-meta{padding:11px 2px 4px;display:flex;align-items:baseline;justify-content:space-between;gap:14px}
+.card-meta h3{margin:0;font-size:13.5px;font-weight:500;letter-spacing:.02em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.card-meta .res{display:block;font-size:10.5px;color:var(--muted);flex:0 0 auto;
+  letter-spacing:.04em;font-variant-numeric:tabular-nums}
 .gallery-empty{text-align:center;color:var(--muted);padding:70px 0;font-size:13.5px}
 
 /* ---------- 灯箱 ---------- */
@@ -213,8 +214,9 @@ function render() {
     const c = document.createElement('button');
     c.className = 'card';
     const ar = (d.w && d.h) ? (d.w + '/' + d.h) : '9/16';
+    const res = (d.w && d.h) ? (d.w + ' × ' + d.h) : '';
     c.innerHTML = '<div class="card-img" style="aspect-ratio:' + ar + '"><img loading="lazy" src="' + d.thumb + '" alt=""></div>' +
-                  '<div class="card-meta"><h3>' + d.title + '</h3><span>' + (d.sub || d.cat) + '</span></div>';
+                  '<div class="card-meta"><h3>' + d.title + '</h3><span class="res">' + res + '</span></div>';
     c.onclick = () => open(i);
     frag.appendChild(c);
   });
