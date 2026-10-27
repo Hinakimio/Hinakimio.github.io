@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light">
 <title>雛希みおの喫茶店</title>
+<meta name="description" content="雛希みお（Hinaki Mio）的插画与角色设定作品集：壁纸、换装与角色设定表。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="雛希みおの喫茶店">
+<meta property="og:description" content="插画、角色设定，以及一些想留下来的瞬间。">
+<meta property="og:image" content="https://hinakimio.github.io/thumbs/壁纸_书房写信_暮色窗景.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23faf9f6'/%3E%3Ctext x='16' y='23' font-size='18' text-anchor='middle' fill='%23b77465'%3E%E9%9B%9B%3C/text%3E%3C/svg%3E">
 <style>
 :root{
   color-scheme:light;
@@ -84,22 +91,31 @@ button{font-family:inherit;cursor:pointer}
 .card:hover{transform:translateY(-5px)}
 .card-img{aspect-ratio:9/16;overflow:hidden;background:#efece6;border-radius:3px}
 /* 卡片框跟随图片自身比例（由 JS 写入 aspect-ratio），横图不再上下留白 */
-.card-img img{width:100%;height:100%;object-fit:contain;display:block;transition:transform .5s}
+.card-img img{width:100%;height:100%;object-fit:contain;display:block;
+  opacity:0;transition:opacity .45s ease,transform .5s}
+.card-img img.ready{opacity:1}
 .card:hover .card-img img{transform:scale(1.045)}
+.card:hover{box-shadow:0 16px 34px -22px rgba(38,35,36,.5)}
 .card-meta{padding:11px 2px 4px;display:flex;align-items:baseline;justify-content:space-between;gap:14px}
 .card-meta h3{margin:0;font-size:13.5px;font-weight:500;letter-spacing:.02em;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .card-meta .res{display:block;font-size:10.5px;color:var(--muted);flex:0 0 auto;
   letter-spacing:.04em;font-variant-numeric:tabular-nums}
 .gallery-empty{text-align:center;color:var(--muted);padding:70px 0;font-size:13.5px}
+.cat-hint{margin:-12px 0 22px;color:var(--muted);font-size:10.5px;letter-spacing:.03em;
+  line-height:1.8;opacity:.72}
+#collection,#top{scroll-margin-top:104px}
 
 /* ---------- 灯箱 ---------- */
 .viewer{position:fixed;inset:0;z-index:80;background:rgba(250,249,246,.97);
-  backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;flex-direction:column;padding:64px 70px}
-.viewer.on{display:flex}
+  backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;flex-direction:column;
+  padding:64px 70px;opacity:0;visibility:hidden;transition:opacity .24s ease,visibility .24s}
+.viewer.on{opacity:1;visibility:visible}
 .viewer-stage{max-width:100%;max-height:78vh;display:flex;align-items:center;justify-content:center}
 .viewer-stage img{max-width:100%;max-height:78vh;object-fit:contain;
-  box-shadow:0 26px 70px -26px rgba(38,35,36,.4);border-radius:3px}
+  box-shadow:0 26px 70px -26px rgba(38,35,36,.4);border-radius:3px;
+  transform:scale(.985);transition:transform .3s cubic-bezier(.2,.7,.3,1),opacity .2s ease}
+.viewer.on .viewer-stage img{transform:scale(1)}
 .viewer-info{margin-top:20px;text-align:center}
 .viewer-info h3{margin:0 0 5px;font-family:var(--serif);font-size:19px;font-weight:400}
 .viewer-info p{margin:0;color:var(--muted);font-size:11.5px;letter-spacing:.1em}
@@ -114,6 +130,24 @@ button{font-family:inherit;cursor:pointer}
   color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:2px;transition:.2s}
 .viewer-dl:hover{color:var(--accent);border-color:var(--accent)}
 [hidden]{display:none!important}
+.card:focus-visible,.categories button:focus-visible,.site-nav button:focus-visible,
+.viewer button:focus-visible,.enter-button:focus-visible{
+  outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+@media (max-width:560px){
+  .site-header{padding:13px 16px;gap:10px}
+  .wordmark strong{font-size:15px;letter-spacing:.1em;white-space:nowrap}
+  .wordmark small{font-size:8.5px;letter-spacing:.2em}
+  .site-nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .site-nav::-webkit-scrollbar{display:none}
+  .site-nav button{padding:5px 10px;font-size:12.5px;white-space:nowrap}
+  .cat-hint{font-size:10px;line-height:1.7}
+  #collection,#top{scroll-margin-top:84px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .card,.card-img img,.viewer,.viewer-stage img,.enter-button svg{transition:none!important;animation:none!important}
+  .viewer-stage img{transform:none}
+}
 </style>
 </head>
 <body>
@@ -153,18 +187,19 @@ button{font-family:inherit;cursor:pointer}
       </div>
       <div class="gallery-toolbar">
         <div class="categories" id="filters"></div>
-        <label><input class="gallery-search" id="search" type="search" placeholder="搜索作品…" autocomplete="off"></label>
+        <label><input class="gallery-search" id="search" type="search" placeholder="搜索作品…" aria-label="搜索作品" autocomplete="off"></label>
       </div>
+      <p class="cat-hint">壁纸＝可直接当桌面或手机背景　·　衣柜＝换装与服装图　·　设定＝角色设定表与三视图</p>
       <div class="gallery-grid" id="grid"></div>
       <p class="gallery-empty" id="empty" hidden>没有找到作品。</p>
     </section>
   </div>
 </main>
 
-<div class="viewer" id="viewer">
-  <button class="viewer-close" id="v-close">&times;</button>
-  <button class="viewer-nav" id="v-prev">&#8249;</button>
-  <button class="viewer-nav" id="v-next">&#8250;</button>
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="作品大图">
+  <button class="viewer-close" id="v-close" aria-label="关闭">&times;</button>
+  <button class="viewer-nav" id="v-prev" aria-label="上一张">&#8249;</button>
+  <button class="viewer-nav" id="v-next" aria-label="下一张">&#8250;</button>
   <div class="viewer-stage"><img id="v-img" alt=""></div>
   <div class="viewer-info">
     <h3 id="v-title"></h3>
@@ -186,19 +221,24 @@ const catName = c => c === 'all' ? '全部' : c;
 cats.forEach(c => {
   const b1 = document.createElement('button');
   b1.textContent = catName(c); b1.dataset.cat = c;
+  b1.setAttribute('aria-pressed', String(c === 'all'));
   if (c === 'all') b1.classList.add('on');
   b1.onclick = () => setCat(c);
   nav.appendChild(b1);
 
   const b2 = document.createElement('button');
   b2.textContent = catName(c); b2.dataset.cat = c;
+  b2.setAttribute('aria-pressed', String(c === 'all'));
   if (c === 'all') b2.classList.add('on');
   b2.onclick = () => setCat(c);
   filters.appendChild(b2);
 });
 function setCat(c) {
   cat = c;
-  document.querySelectorAll('[data-cat]').forEach(b => b.classList.toggle('on', b.dataset.cat === c));
+  document.querySelectorAll('[data-cat]').forEach(b => {
+    b.classList.toggle('on', b.dataset.cat === c);
+    b.setAttribute('aria-pressed', String(b.dataset.cat === c));
+  });
   render();
 }
 
@@ -215,26 +255,47 @@ function render() {
     c.className = 'card';
     const ar = (d.w && d.h) ? (d.w + '/' + d.h) : '9/16';
     const res = (d.w && d.h) ? (d.w + ' × ' + d.h) : '';
-    c.innerHTML = '<div class="card-img" style="aspect-ratio:' + ar + '"><img loading="lazy" src="' + d.thumb + '" alt=""></div>' +
+    c.innerHTML = '<div class="card-img" style="aspect-ratio:' + ar + '"><img loading="lazy" src="' + d.thumb + '" alt="' + d.title + '"></div>' +
                   '<div class="card-meta"><h3>' + d.title + '</h3><span class="res">' + res + '</span></div>';
+    c.setAttribute('aria-label', d.title + '，' + d.cat + (res ? '，' + res : ''));
     c.onclick = () => open(i);
     frag.appendChild(c);
   });
   grid.replaceChildren(frag);
+  grid.querySelectorAll('.card-img img').forEach(im => {
+    if (im.complete && im.naturalWidth) im.classList.add('ready');
+    else im.addEventListener('load', () => im.classList.add('ready'), { once: true });
+  });
 }
 
-function open(i) { cur = i; paint(); $('viewer').classList.add('on'); document.body.style.overflow = 'hidden'; }
-function close() { $('viewer').classList.remove('on'); document.body.style.overflow = ''; }
+let lastFocus = null;
+function open(i) {
+  lastFocus = document.activeElement;
+  cur = i; paint(); $('viewer').classList.add('on');
+  document.body.style.overflow = 'hidden';
+  $('v-close').focus();
+}
+function close() {
+  $('viewer').classList.remove('on');
+  document.body.style.overflow = '';
+  if (lastFocus && lastFocus.focus) lastFocus.focus();
+}
 function step(n) { if (!view.length) return; cur = (cur + n + view.length) % view.length; paint(); }
 function paint() {
   const d = view[cur]; if (!d) return;
-  $('v-img').src = d.file;
-  $('v-img').alt = d.title;
+  const im = $('v-img');
+  im.style.opacity = '0';
+  im.onload = () => { im.style.opacity = '1'; };
+  im.src = d.file;
+  if (im.complete) im.style.opacity = '1';
+  im.alt = d.title;
   $('v-title').textContent = d.title;
   $('v-sub').textContent = (d.sub ? d.sub + ' · ' : '') + d.cat + ' · ' + (d.date || '') + '　' + (cur + 1) + '/' + view.length;
   $('v-dl').href = d.file;
   $('v-dl').setAttribute('download', d.title + (d.file.match(/\.[a-z]+$/i) || [''])[0]);
+  preload((cur + 1) % view.length); preload((cur - 1 + view.length) % view.length);
 }
+function preload(i) { const d = view[i]; if (d) { const p = new Image(); p.src = d.file; } }
 
 $('enter').onclick = () => { $('gate').hidden = true; $('stage').hidden = false; window.scrollTo(0, 0); };
 $('v-close').onclick = close;
@@ -250,8 +311,28 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') step(1);
 });
 
+/* 灯箱内 Tab 焦点循环，不跑到背后页面 */
+$('viewer').addEventListener('keydown', e => {
+  if (e.key !== 'Tab') return;
+  const f = [$('v-close'), $('v-prev'), $('v-next'), $('v-dl')];
+  const i = f.indexOf(document.activeElement);
+  if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+  else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+});
+
+/* 手机左右滑动切换 */
+let tx = 0, ty = 0;
+$('viewer').addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+}, { passive: true });
+$('viewer').addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  const dy = e.changedTouches[0].clientY - ty;
+  if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) step(dx < 0 ? 1 : -1);
+}, { passive: true });
+
 /* Hero 用第一张作品 */
-if (DATA.length) $('hero-img').src = DATA[0].file;
+if (DATA.length) { $('hero-img').src = DATA[0].thumb; $('hero-img').alt = DATA[0].title; }
 render();
 </script>
 </body>
