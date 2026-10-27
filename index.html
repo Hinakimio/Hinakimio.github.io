@@ -41,7 +41,15 @@ button{font-family:inherit;cursor:pointer}
 .site-nav button.on{color:var(--ink);border-color:var(--line);background:#fff}
 
 /* ---------- 门 ---------- */
-.access-gate{min-height:100vh;display:grid;place-items:center;text-align:center;padding:0 24px}
+.access-gate{position:relative;overflow:hidden;min-height:100vh;display:grid;place-items:center;text-align:center;padding:0 24px}
+.gate-bg{position:absolute;inset:0;background-size:cover;background-position:center 32%;
+  transform:scale(1.04);filter:blur(1.2px) saturate(1.06);opacity:0;transition:opacity 1.1s ease}
+.gate-bg.ready{opacity:1}
+.gate-bg::after{content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(62% 46% at 50% 40%,rgba(250,249,246,.96) 0%,rgba(250,249,246,.8) 48%,rgba(250,249,246,0) 100%),
+    linear-gradient(180deg,rgba(250,249,246,.34) 0%,rgba(250,249,246,.58) 62%,rgba(250,249,246,.92) 100%)}
+.access-form{position:relative;z-index:2}
 .eyebrow{font-size:10.5px;letter-spacing:.34em;color:var(--muted);margin:0 0 22px;text-transform:uppercase}
 .access-form h1{font-family:var(--serif);font-size:clamp(38px,8.5vw,76px);
   margin:0 0 20px;font-weight:400;letter-spacing:.02em;line-height:1.16}
@@ -109,14 +117,14 @@ button{font-family:inherit;cursor:pointer}
 /* ---------- 灯箱 ---------- */
 .viewer{position:fixed;inset:0;z-index:80;background:rgba(250,249,246,.97);
   backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;flex-direction:column;
-  padding:64px 70px;opacity:0;visibility:hidden;transition:opacity .24s ease,visibility .24s}
+  padding:54px 64px 34px;opacity:0;visibility:hidden;transition:opacity .24s ease,visibility .24s}
 .viewer.on{opacity:1;visibility:visible}
-.viewer-stage{max-width:100%;max-height:78vh;display:flex;align-items:center;justify-content:center}
-.viewer-stage img{max-width:100%;max-height:78vh;object-fit:contain;
+.viewer-stage{flex:1 1 auto;min-height:0;max-width:100%;display:flex;align-items:center;justify-content:center}
+.viewer-stage img{max-width:100%;max-height:100%;object-fit:contain;
   box-shadow:0 26px 70px -26px rgba(38,35,36,.4);border-radius:3px;
   transform:scale(.985);transition:transform .3s cubic-bezier(.2,.7,.3,1),opacity .2s ease}
 .viewer.on .viewer-stage img{transform:scale(1)}
-.viewer-info{margin-top:20px;text-align:center}
+.viewer-info{flex:0 0 auto;margin-top:16px;text-align:center}
 .viewer-info h3{margin:0 0 5px;font-family:var(--serif);font-size:19px;font-weight:400}
 .viewer-info p{margin:0;color:var(--muted);font-size:11.5px;letter-spacing:.1em}
 .viewer-close{position:absolute;top:18px;right:24px;font-size:30px;line-height:1;
@@ -129,6 +137,14 @@ button{font-family:inherit;cursor:pointer}
 .viewer-dl{display:inline-block;margin-top:14px;font-size:11.5px;letter-spacing:.12em;
   color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:2px;transition:.2s}
 .viewer-dl:hover{color:var(--accent);border-color:var(--accent)}
+.viewer-strip{flex:0 0 auto;display:flex;gap:8px;margin-top:14px;justify-content:center;
+  max-width:min(600px,82vw);overflow-x:auto;padding:2px;scrollbar-width:none}
+.viewer-strip::-webkit-scrollbar{display:none}
+.viewer-strip button{flex:0 0 auto;width:54px;height:54px;padding:0;border:1px solid var(--line);
+  border-radius:3px;overflow:hidden;background:#efece6;opacity:.6;transition:opacity .2s,border-color .2s}
+.viewer-strip button:hover{opacity:1}
+.viewer-strip button.on{opacity:1;border-color:var(--accent);outline:2px solid var(--accent);outline-offset:2px}
+.viewer-strip img{width:100%;height:100%;object-fit:cover;display:block}
 [hidden]{display:none!important}
 .card:focus-visible,.categories button:focus-visible,.site-nav button:focus-visible,
 .viewer button:focus-visible,.enter-button:focus-visible{
@@ -159,6 +175,7 @@ button{font-family:inherit;cursor:pointer}
 
 <main>
   <section class="access-gate" id="gate">
+    <div class="gate-bg" id="gate-bg" aria-hidden="true"></div>
     <div class="access-form">
       <p class="eyebrow">HINAKI MIO COLLECTION</p>
       <h1>雛希みおの<span class="accent-dot">喫茶店</span></h1>
@@ -206,6 +223,7 @@ button{font-family:inherit;cursor:pointer}
     <p id="v-sub"></p>
     <a class="viewer-dl" id="v-dl" download>下载原图 ↓</a>
   </div>
+  <div class="viewer-strip" id="v-strip" aria-label="同类作品"></div>
 </div>
 
 <script>
@@ -294,8 +312,36 @@ function paint() {
   $('v-dl').href = d.file;
   $('v-dl').setAttribute('download', d.title + (d.file.match(/\.[a-z]+$/i) || [''])[0]);
   preload((cur + 1) % view.length); preload((cur - 1 + view.length) % view.length);
+  strip();
 }
 function preload(i) { const d = view[i]; if (d) { const p = new Image(); p.src = d.file; } }
+
+/* 灯箱底部：同分类其它作品 */
+function strip() {
+  const box = $('v-strip');
+  const here = view[cur];
+  if (!here) { box.replaceChildren(); box.hidden = true; return; }
+  const same = view.map((d, i) => i).filter(i => view[i].cat === here.cat);
+  if (same.length < 2) { box.replaceChildren(); box.hidden = true; return; }
+  const pos = same.indexOf(cur);
+  const picks = [pos - 2, pos - 1, pos, pos + 1, pos + 2]
+    .filter(k => k >= 0 && k < same.length).map(k => same[k]);
+  const frag = document.createDocumentFragment();
+  picks.forEach(i => {
+    const d = view[i];
+    const b = document.createElement('button');
+    b.className = 'viewer-strip-item' + (i === cur ? ' on' : '');
+    b.setAttribute('aria-label', d.title);
+    b.innerHTML = '<img src="' + d.thumb + '" alt="" loading="lazy">';
+    b.onclick = () => jump(i);
+    frag.appendChild(b);
+  });
+  box.replaceChildren(frag);
+  box.hidden = false;
+  const active = box.querySelector('.on');
+  if (active && active.scrollIntoView) active.scrollIntoView({ block: 'nearest', inline: 'center' });
+}
+function jump(i) { cur = i; paint(); }
 
 $('enter').onclick = () => { $('gate').hidden = true; $('stage').hidden = false; window.scrollTo(0, 0); };
 $('v-close').onclick = close;
@@ -333,6 +379,21 @@ $('viewer').addEventListener('touchend', e => {
 
 /* Hero 用第一张作品 */
 if (DATA.length) { $('hero-img').src = DATA[0].thumb; $('hero-img').alt = DATA[0].title; }
+
+/* 入场门背景：优先选场景感强的壁纸，找不到就用最新一张 */
+(function gateBg() {
+  const walls = DATA.filter(d => d.cat === '壁纸');
+  const prefer = ['花园茶会_睡莲池侍茶', '雨天图书室_炉边阅读', '书房写信_暮色窗景',
+                  '温室侍花_白玫瑰晨光', '琴房午后_窗外玫瑰园'];
+  let pick = null;
+  for (const t of prefer) { pick = walls.find(d => d.title === t); if (pick) break; }
+  if (!pick) pick = (walls.length ? walls : DATA).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''))[0];
+  if (!pick) return;
+  const el = $('gate-bg');
+  const img = new Image();
+  img.onload = () => { el.style.backgroundImage = 'url("' + pick.thumb + '")'; el.classList.add('ready'); };
+  img.src = pick.thumb;
+})();
 render();
 </script>
 </body>
