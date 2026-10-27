@@ -63,15 +63,32 @@ button{font-family:inherit;cursor:pointer}
 .enter-button svg{transition:transform .22s}
 
 /* ---------- Hero ---------- */
-.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;
+.hero{position:relative;min-height:92vh;display:flex;flex-direction:column;
   align-items:center;justify-content:center;padding:120px 24px 80px;text-align:center}
-.hero-art{border:0;background:none;padding:0;max-width:min(560px,74vw);cursor:zoom-in}
+.hero-art{border:0;background:none;padding:0;max-width:min(560px,74vw);cursor:zoom-in;
+  display:flex;align-items:center;justify-content:center}
 .hero-art img{width:100%;display:block;border-radius:3px;
   box-shadow:0 22px 60px -22px rgba(38,35,36,.34)}
 .hero-caption{margin-top:34px}
 .hero-caption h1{font-family:var(--serif);font-size:clamp(30px,5.4vw,48px);
   margin:0 0 10px;font-weight:400}
 .hero-caption p:not(.eyebrow){color:var(--muted);margin:0;font-size:13.5px;letter-spacing:.06em}
+.hero-intro{color:var(--muted);margin:20px 0 0;font-size:13.5px;line-height:2.05;letter-spacing:.02em;max-width:390px}
+.hero-counts{margin:20px 0 0;font-size:11.5px;letter-spacing:.16em;color:var(--muted)}
+.hero-cta{display:inline-block;margin-top:22px;font-size:12px;letter-spacing:.14em;
+  color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:3px;transition:.2s}
+.hero-cta:hover{color:var(--accent);border-color:var(--accent)}
+@media (min-width:900px){
+  .hero{flex-direction:row;align-items:center;justify-content:center;
+    gap:clamp(40px,4.5vw,96px);text-align:left;
+    padding:104px clamp(32px,5vw,80px) 64px;
+    max-width:1400px;margin:0 auto}
+  .hero-art{flex:0 1 auto;max-width:min(880px,47vw);max-height:74vh}
+  .hero-art img{width:100%;height:auto;max-height:74vh;object-fit:contain}
+  .hero-caption{flex:1 1 340px;margin-top:0;max-width:460px;text-align:left}
+  .hero-caption h1{font-size:clamp(34px,3.4vw,54px);line-height:1.1}
+  .hero-caption p:not(.eyebrow){font-size:14px;line-height:1.9}
+}
 .hero-scroll{position:absolute;bottom:34px;font-size:19px;color:var(--muted);
   animation:bob 2.4s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(7px);opacity:1}}
@@ -193,6 +210,9 @@ button{font-family:inherit;cursor:pointer}
         <p class="eyebrow">THE HINAKI MIO COLLECTION</p>
         <h1>Hinaki Mio.</h1>
         <p>雛希みお ／ 插画 · 角色设定</p>
+        <p class="hero-intro">樱花粉发的文学少女，在书房、温室与花店之间。<br>这里是她的全部留影。</p>
+        <p class="hero-counts" id="hero-counts"></p>
+        <a class="hero-cta" href="#collection">全部作品 · <span id="hero-count">0</span> 张 ↓</a>
       </div>
       <a class="hero-scroll" href="#collection">↓</a>
     </section>
@@ -349,7 +369,11 @@ $('v-prev').onclick = () => step(-1);
 $('v-next').onclick = () => step(1);
 $('viewer').onclick = e => { if (e.target.id === 'viewer' || e.target.classList.contains('viewer-stage')) close(); };
 $('search').oninput = e => { q = e.target.value.trim().toLowerCase(); render(); };
-$('hero-art').onclick = () => { if (view.length) open(0); };
+$('hero-art').onclick = () => {
+  let i = view.findIndex(d => d.id === heroId);
+  if (i < 0) { q = ''; $('search').value = ''; setCat('all'); i = view.findIndex(d => d.id === heroId); }
+  if (i >= 0) open(i);
+};
 document.addEventListener('keydown', e => {
   if (!$('viewer').classList.contains('on')) return;
   if (e.key === 'Escape') close();
@@ -377,8 +401,21 @@ $('viewer').addEventListener('touchend', e => {
   if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) step(dx < 0 ? 1 : -1);
 }, { passive: true });
 
-/* Hero 用第一张作品 */
-if (DATA.length) { $('hero-img').src = DATA[0].thumb; $('hero-img').alt = DATA[0].title; }
+/* Hero 选一张竖构图的作品（竖图在两栏布局里更撑得住） */
+let heroId = null;
+(function heroPick() {
+  const prefer = ['书房写信_暮色窗景', '温室侍花_白玫瑰晨光', '湖畔写生_黄昏暖光'];
+  let pick = null;
+  for (const t of prefer) { pick = DATA.find(d => d.title === t); if (pick) break; }
+  if (!pick) pick = DATA.find(d => d.w > d.h) || DATA[0];
+  if (!pick) return;
+  heroId = pick.id;
+  $('hero-img').src = (pick.title === '书房写信_暮色窗景') ? 'hero/hero.jpg' : pick.thumb;
+  $('hero-img').alt = pick.title;
+  $('hero-count').textContent = DATA.length;
+  const n = c => DATA.filter(d => d.cat === c).length;
+  $('hero-counts').textContent = '壁纸 ' + n('壁纸') + '　衣柜 ' + n('衣柜') + '　设定 ' + n('设定');
+})();
 
 /* 入场门背景：优先选场景感强的壁纸，找不到就用最新一张 */
 (function gateBg() {
