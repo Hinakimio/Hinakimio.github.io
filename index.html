@@ -172,7 +172,8 @@ button{font-family:inherit;cursor:pointer}
   .wordmark small{font-size:8.5px;letter-spacing:.2em}
   .site-nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .site-nav::-webkit-scrollbar{display:none}
-  .site-nav button{padding:5px 10px;font-size:12.5px;white-space:nowrap}
+  /* 触控目标高度 ≥44px（原 48×28 低于建议值） */
+  .site-nav button{padding:5px 12px;font-size:12.5px;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center}
   .cat-hint{font-size:10px;line-height:1.7}
   #collection,#top{scroll-margin-top:84px}
 }
@@ -311,7 +312,8 @@ function open(i) {
   lastFocus = document.activeElement;
   cur = i; paint(); $('viewer').classList.add('on');
   document.body.style.overflow = 'hidden';
-  $('v-close').focus();
+  /* 点击卡的默认聚焦会在 handler 之后发生，延迟一帧再抢焦点，否则焦点仍留在背景卡片上 */
+  setTimeout(() => { if ($('viewer').classList.contains('on')) $('v-close').focus(); }, 0);
 }
 function close() {
   $('viewer').classList.remove('on');
@@ -381,12 +383,17 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') step(1);
 });
 
-/* 灯箱内 Tab 焦点循环，不跑到背后页面 */
-$('viewer').addEventListener('keydown', e => {
+/* 灯箱焦点陷阱：收到 document 上，焦点被抢到背景时按 Tab 也能拉回灯箱内 */
+document.addEventListener('keydown', e => {
   if (e.key !== 'Tab') return;
-  const f = [$('v-close'), $('v-prev'), $('v-next'), $('v-dl')];
+  const v = $('viewer');
+  if (!v.classList.contains('on')) return;
+  const f = [...v.querySelectorAll('button, a[href], [tabindex]:not([tabindex="-1"])')]
+    .filter(el => el.offsetParent !== null);
+  if (!f.length) return;
   const i = f.indexOf(document.activeElement);
-  if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+  if (i === -1) { e.preventDefault(); (e.shiftKey ? f[f.length - 1] : f[0]).focus(); return; }
+  if (e.shiftKey && i === 0) { e.preventDefault(); f[f.length - 1].focus(); }
   else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
 });
 
