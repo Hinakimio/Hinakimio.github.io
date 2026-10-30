@@ -252,6 +252,10 @@ const DATA = [{"id": "壁纸_万圣节_南瓜夜装", "cat": "壁纸", "title": 
 let view = [], cur = 0, cat = 'all', q = '';
 
 const $ = id => document.getElementById(id);
+
+/* 灯箱优先加载 WebP（体积约原图 1/8）；缺失或浏览器不支持时自动回退原 PNG。
+   下载按钮始终给原图，不走这里。 */
+const webpOf = f => f.replace(/^works\//, 'viewer/').replace(/\.png$/i, '.webp');
 const grid = $('grid'), filters = $('filters'), nav = $('nav');
 
 /* 分类按钮：顶栏 + 工具条各一份（固定三项，不随数据变化） */
@@ -326,7 +330,8 @@ function paint() {
   const im = $('v-img');
   im.style.opacity = '0';
   im.onload = () => { im.style.opacity = '1'; };
-  im.src = d.file;
+  im.onerror = () => { im.onerror = null; im.src = d.file; };   /* WebP 缺失/不支持 → 回退原 PNG */
+  im.src = webpOf(d.file);
   if (im.complete) im.style.opacity = '1';
   im.alt = d.title;
   $('v-title').textContent = d.title;
@@ -336,7 +341,7 @@ function paint() {
   preload((cur + 1) % view.length); preload((cur - 1 + view.length) % view.length);
   strip();
 }
-function preload(i) { const d = view[i]; if (d) { const p = new Image(); p.src = d.file; } }
+function preload(i) { const d = view[i]; if (d) { const p = new Image(); p.src = webpOf(d.file); } }
 
 /* 灯箱底部：同分类其它作品 */
 function strip() {
