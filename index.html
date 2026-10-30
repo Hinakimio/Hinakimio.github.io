@@ -256,6 +256,8 @@ const $ = id => document.getElementById(id);
 /* 灯箱优先加载 WebP（体积约原图 1/8）；缺失或浏览器不支持时自动回退原 PNG。
    下载按钮始终给原图，不走这里。 */
 const webpOf = f => f.replace(/^works\//, 'viewer/').replace(/\.png$/i, '.webp');
+/* 缩略图同理：优先 WebP，缺了由 onerror 回退原 JPG */
+const thumbOf = f => f.replace(/^thumbs\//, 'thumbs-webp/').replace(/\.jpg$/i, '.webp');
 const grid = $('grid'), filters = $('filters'), nav = $('nav');
 
 /* 分类按钮：顶栏 + 工具条各一份（固定三项，不随数据变化） */
@@ -298,7 +300,7 @@ function render() {
     c.className = 'card';
     const ar = (d.w && d.h) ? (d.w + '/' + d.h) : '9/16';
     const res = (d.w && d.h) ? (d.w + ' × ' + d.h) : '';
-    c.innerHTML = '<div class="card-img" style="aspect-ratio:' + ar + '"><img loading="lazy" src="' + d.thumb + '" alt="' + d.title + '"></div>' +
+    c.innerHTML = '<div class="card-img" style="aspect-ratio:' + ar + '"><img loading="lazy" decoding="async" src="' + thumbOf(d.thumb) + '" onerror="this.onerror=null;this.src=\'' + d.thumb + '\'" alt="' + d.title + '"></div>' +
                   '<div class="card-meta"><h3>' + d.title + '</h3><span class="res">' + res + '</span></div>';
     c.setAttribute('aria-label', d.title + '，' + d.cat + (res ? '，' + res : ''));
     c.onclick = () => open(i);
@@ -359,7 +361,7 @@ function strip() {
     const b = document.createElement('button');
     b.className = 'viewer-strip-item' + (i === cur ? ' on' : '');
     b.setAttribute('aria-label', d.title);
-    b.innerHTML = '<img src="' + d.thumb + '" alt="" loading="lazy">';
+    b.innerHTML = '<img src="' + thumbOf(d.thumb) + '" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\'' + d.thumb + '\'">';
     b.onclick = () => jump(i);
     frag.appendChild(b);
   });
