@@ -424,8 +424,21 @@ let heroId = null;
   if (!pick) pick = DATA.find(d => d.w > d.h) || DATA[0];
   if (!pick) return;
   heroId = pick.id;
-  $('hero-img').src = (pick.title === '书房写信_暮色窗景') ? 'hero/hero.jpg' : pick.thumb;
-  $('hero-img').alt = pick.title;
+  /* 首屏大图：WebP 双档 srcset（显示最宽 560px，按 DPR 选 640w / 1120w），原 JPG 保留作回退 */
+  const hi = $('hero-img');
+  const isHero = pick.title === '书房写信_暮色窗景';
+  hi.onerror = () => { hi.onerror = null; hi.src = isHero ? 'hero/hero.jpg' : pick.thumb; };
+  if (isHero) {
+    hi.srcset = 'hero/hero-640.webp 640w, hero/hero-1120.webp 1120w';
+    hi.sizes = '(max-width: 760px) 74vw, 560px';
+    hi.src = 'hero/hero.webp';
+  } else {
+    hi.removeAttribute('srcset');
+    hi.src = thumbOf(pick.thumb);
+  }
+  hi.fetchPriority = 'high';
+  hi.decoding = 'async';
+  hi.alt = pick.title;
   $('hero-count').textContent = DATA.length;
   const n = c => DATA.filter(d => d.cat === c).length;
   $('hero-counts').textContent = '壁纸 ' + n('壁纸') + '　衣柜 ' + n('衣柜') + '　设定 ' + n('设定');
@@ -442,8 +455,10 @@ let heroId = null;
   if (!pick) return;
   const el = $('gate-bg');
   const img = new Image();
-  img.onload = () => { el.style.backgroundImage = 'url("' + pick.thumb + '")'; el.classList.add('ready'); };
-  img.src = pick.thumb;
+  /* 入场门背景同样走 WebP，缺了再退回原 JPG */
+  img.onload = () => { el.style.backgroundImage = 'url("' + img.src + '")'; el.classList.add('ready'); };
+  img.onerror = () => { el.style.backgroundImage = 'url("' + pick.thumb + '")'; el.classList.add('ready'); };
+  img.src = thumbOf(pick.thumb);
 })();
 render();
 </script>
